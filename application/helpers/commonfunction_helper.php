@@ -192,6 +192,7 @@ if(!function_exists('upload_product_image')){
                 $image_path =  'uploads/'.$path_parts['filename'].'.'.$path_parts['extension'];
                 $data['errCode'] = -1;
                 $data['image']   = $image_path;
+                $data['path'] = base_url().$image_path;
                 return $data;
             }else{
                  $errors =  $ci->image_lib->display_errors();

@@ -305,8 +305,6 @@ class Product extends CI_Controller {
 
     }
     public function updateProduct(){
-
-
        $this->form_validation->set_rules('model_no','Model No','required|trim|xss_clean|max_length[255]');
        $this->form_validation->set_rules('vehicale_name','Vehical Name','required|trim|xss_clean|max_length[255]');
         $this->form_validation->set_rules('brand_id','Brand','required|trim|xss_clean|max_length[255]');
@@ -438,7 +436,6 @@ class Product extends CI_Controller {
             // }
         }else{
             $returnArr['errCode'] = 3;
-
             foreach ($this->input->post() as $key => $value) {
                 $returnArr['message'][$key] = form_error($key);
             }
@@ -1169,6 +1166,19 @@ class Product extends CI_Controller {
 
     }
 
-
-    //
+    public function uploadImage(){
+        $upload = upload_product_image($_FILES,'upload');
+        if($upload['errCode'] == -1){
+            $CKEditorFuncNum = $_GET['CKEditorFuncNum'];
+            $url = $upload['path'];
+            $msg = 'Image uploaded Successfully';
+            $image = $upload['image'];
+            $output = '<script>window.parent.CKEDITOR.tools.callFunction('.$CKEditorFuncNum.', "'.$url.'", "'.$msg.'")</script>';
+        }else{
+            $returnArr['errCode']      = 3;
+            $returnArr['message']['image']      = $upload['image'];
+            $output = '<script>alert("'.$upload['image'].'")</script>';
+        }
+        echo $output;
+    }
 }

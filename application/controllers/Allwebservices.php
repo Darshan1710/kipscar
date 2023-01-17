@@ -440,7 +440,113 @@ class Allwebservices extends CI_Controller {
         }
         $returnArr = array('error'=>$error,'message'=>$message);
         echo json_encode($returnArr);
-    }   
+    }  
+
+    public function getDemoProductDetails(){
+
+ 
+
+ $jayParsedAry = [
+   "error" => false, 
+   "message" => [
+         "id" => "1", 
+         "model_no" => "CAM-AU/AT", 
+         "vehicale_name" => "Audi A4, A5, Q5 Camera Add On Interface in OEM Radio", 
+         "image" => "https://www.kipscar.globalbyte.co.in/uploads/1612939429WhatsApp_Image_2021-02-10_at_12_09_47.jpeg", 
+         "brand_id" => "1", 
+         "category_id" => "1", 
+         "sub_category" => null, 
+         "mrp" => "37776", 
+         "status" => "1", 
+         "new_products" => null, 
+         "top_selling_products" => null, 
+         "created_at" => "2021-02-08 10:34:03", 
+         "updated_at" => null, 
+         "description" => "Camera Add On Interface in OEM Radio", 
+         "vehical_application" => "Applicable from 2011-16 Note Consider Harness image back side of radio & Screen", 
+         "features" => "1- Plug and play - no cutting of wires required 2- Add on Rear Camera in the OEM radio- 3- Allow you to see Rear View Camera vision in the OEM radio and no need to install any additional screen or change your original feature rear view mirror-", 
+         "other_information" => "Please check the connections in the vehicle match the harness you are purchasing", 
+         "disclaimer" => "KIPSC AR-AV ELECTRONICS PVT LTD cannot be held responsible for discrepancies/inconsistencies that may occur due to vehicle manufacturing changes- Liability is restricted to replacement of Product/s only if any damage that may occur in the vehicle during the installation of components-", 
+         "color_code" => "#000000", 
+         "background_color" => "#707f82", 
+         "tags" => "CAMAUAT", 
+         "images" => [
+            [
+               "image" => "https://www.kipscar.globalbyte.co.in/uploads/1627710559.jpeg", 
+               "type" => "1", 
+               "video_android" => "", 
+               "video" => null 
+            ], 
+            [
+                  "image" => "https://www.kipscar.globalbyte.co.in/uploads/1627728751.jpeg", 
+                  "type" => "1", 
+                  "video_android" => "", 
+                  "video" => null 
+            ], 
+            [
+                     "image" => "https://www.kipscar.globalbyte.co.in/uploads/1627730233.jpeg", 
+                     "type" => "1", 
+                     "video_android" => "", 
+                     "video" => null 
+            ],
+            [
+                  "image" => "https://www.kipscar.globalbyte.co.in/uploads/1627728751.jpeg", 
+                  "type" => "2", 
+                  "video_android" => "gCwqhzq9nmY", 
+                  "video" => "https://www.youtube.com/watch?v=gCwqhzq9nmY&ab_channel=GlobalByte" 
+            ], 
+            [
+                     "image" => "https://www.kipscar.globalbyte.co.in/uploads/1627730233.jpeg", 
+                     "type" => "2", 
+                     "video_android" => "TL_uFAKibOk", 
+                     "video" => "https://www.youtube.com/watch?v=TL_uFAKibOk&feature=youtu.be&ab_channel=GlobalByte" 
+            ] 
+         ], 
+         "conditions" => [
+                        [
+                           "id" => "1558", 
+                           "condition" => "Suggested Front Camera" 
+                        ], 
+                        [
+                              "id" => "57", 
+                              "condition" => "Suggested OEM Standard Camera" 
+                           ], 
+                        [
+                                 "id" => "58", 
+                                 "condition" => "suggested 1000 TVL Camera" 
+                              ], 
+                        [
+                                    "id" => "52", 
+                                    "condition" => "Suggested 110 Degree View Dome Camera" 
+                                 ], 
+                        [
+                                       "id" => "1559", 
+                                       "condition" => "Suggested 150 Degree View Dome Camera" 
+                                    ], 
+                        [
+                                          "id" => "1560", 
+                                          "condition" => "Suggested 170 Degree View Dome Camera" 
+                                       ], 
+                        [
+                                             "id" => "24", 
+                                             "condition" => "Suggested  Front  Monogram Camera" 
+                                          ], 
+                        [
+                                                "id" => "25", 
+                                                "condition" => "Suggested 150 Degree View OEM  Type Camera" 
+                                             ], 
+                        [
+                                                   "id" => "1014", 
+                                                   "condition" => "Suggested Add on Mobile Mirroring Kit" 
+                                                ] 
+                     ] 
+      ] 
+]; 
+
+    echo json_encode($jayParsedAry);
+ 
+ 
+    } 
 
     public function addActivity($page,$product_id = false,$mrp = false){
         $data = array('page'=>$page,

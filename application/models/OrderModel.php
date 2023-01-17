@@ -244,7 +244,7 @@ class OrderModel extends CI_Model {
         return $this->db->get('orders o')->result_array();
     }
 
-    public function getOrderListByClient($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit,$offset){
+    public function getOrderListByClient($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit = false,$offset = false){
         $this->db->select('c.name as client_name,CONCAT(address_1,",",address_2,",",city,",",district,",",state,",",pincode) as address,cc.mobile');
         $this->db->where('sales_person_id',$sales_person_id);
         $this->db->where('customer_id',$customer_id);
@@ -259,7 +259,7 @@ class OrderModel extends CI_Model {
         $this->db->group_by('customer_id');
         return $this->db->get('orders o')->row_array();
     }
-    public function getOrderListByCustomer($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit,$offset){
+    public function getOrderListByCustomer($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit = false,$offset = false){
         $this->db->select('c.name as client_name,CONCAT(address_1,",",address_2,",",city,",",district,",",state,",",pincode) as address,c.mobile');
         $this->db->where('sales_person_id',$sales_person_id);
         $this->db->where('o.customer_id',$customer_id);
@@ -275,7 +275,7 @@ class OrderModel extends CI_Model {
         return $this->db->get('orders o')->row_array();
     }
 
-    public function getOrderListDetails($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit,$offset){
+    public function getOrderListDetails($customer_id,$sales_person_id,$order_by = false,$order_date = false,$limit = false,$offset = false){
         $this->db->select("o.order_id as order_id,invoice_no,COUNT(ol.id) as number_of_items,total,DATE_FORMAT(o.created_at,'%d-%m-%Y %h:%i %p') as order_date,CASE WHEN o.status = 1 THEN 'Complete' ELSE 'Pending' END as status",false);
         $this->db->where('sales_person_id',$sales_person_id);
         $this->db->where('customer_id',$customer_id);
