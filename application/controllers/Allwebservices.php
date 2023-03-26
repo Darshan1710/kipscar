@@ -346,7 +346,7 @@ class Allwebservices extends CI_Controller {
                 $message = array();
             }else{
                 $error = false;
-                $message = $product;;
+                $message = $product;
             }
         }else{
 
@@ -371,51 +371,54 @@ class Allwebservices extends CI_Controller {
             
             $product['image'] = base_url().$product['image'];
 
-            $i_filter = array('product_id'=>$product_id,'status'=>'1','type'=>'1');
+            $i_filter = array('product_id'=>$product_id,'status'=>'1');
             $images   = $this->AdminModel->getList('product_images',$i_filter,$join = NULL,$select = NULL,$limit = NULL,$offset = NULL,'img_order');
 
 //
-            $image_data = array();
+            $images_data = array();
+            $video_data = array();
             
             $i = 0;
+            $j = 0;
             foreach($images as $im){
-                $image_data[$i]['image'] = base_url().$im['product_images'];
-                $image_data[$i]['type'] = $im['type'];
-
-                parse_str( parse_url( $im['video'], PHP_URL_QUERY ), $my_array_of_vars );
-                if(!empty($my_array_of_vars)){
-                    $image_data[$i]['video_android'] = $my_array_of_vars['v'];  
+                if($im['type'] == '1'){
+                    $images_data[$i]['image'] = base_url().$im['product_images'];
+                    $images_data[$i]['type'] = $im['type'];
+                    $images_data[$i]['video_android'] = '';                    
+                    $images_data[$i]['video'] = $im['video'];
+                    $i++;
                 }else{
-                    $image_data[$i]['video_android'] = '';
+                    if(isset($im['video']) && !empty($im['video'])){
+                       $video_data[$j]['image'] = base_url().$im['product_images'];
+                        $video_data[$j]['type'] = $im['type'];
+
+                        parse_str( parse_url( $im['video'], PHP_URL_QUERY ), $my_array_of_vars );
+                        if(!empty($my_array_of_vars)){
+                            $video_data[$j]['video_android'] = $my_array_of_vars['v'];  
+                        }else{
+                            $video_data[$j]['video_android'] = '';
+                        }
+                        
+                        $video_data[$j]['video'] = $im['video'];
+                        $j++; 
+                    }
                 }
-                
-                $image_data[$i]['video'] = $im['video'];
-                $i++;
             }
-            if(!empty($images_data)){
-                $product['images'] = $image_data;
-            }else{
+
+            
+            if(empty($images_data)){
                 $images_data[0]['image'] = base_url().$product['image'];
-                $images_data[0]['image'] = 1;
+                $images_data[0]['type'] = "1";
                 $images_data[0]['video_android'] = '';
                 $images_data[0]['video'] = null; 
+                
             }
             //video
-            $v_filter = array('product_id'=>$product_id,'type'=>'2','status'=>'1');
-            $video   = $this->AdminModel->getDetails('product_images',$v_filter);
+            $product['videos'] = $video_data ?? 'No Installation Video Available';
+            $product['images'] = $images_data;
 
             $product['video_thumbnail'] = '';
-            if($video['product_images']){
-                $product['video_thumbnail'] = base_url().$video['product_images'];    
-            }
-            $product['video'] = $video['video'];
-
-            parse_str( parse_url( $video['video'], PHP_URL_QUERY ), $my_array_of_vars );
-            if(!empty($my_array_of_vars)){
-                $product['video_android'] = $my_array_of_vars['v']; 
-            }else{
-                $product['video_android'] = '';
-            }
+           $product['video_android'] = '';
 
             $c_filter = array('sp.status'=>'1','product_id'=>$product_id);
             $conditions = $this->AdminModel->getSuggestedProducts($c_filter);
