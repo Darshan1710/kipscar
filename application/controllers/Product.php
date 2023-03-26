@@ -176,18 +176,31 @@ class Product extends CI_Controller {
         $this->form_validation->set_rules('other_information','Other Information','trim|xss_clean');
         $this->form_validation->set_rules('disclaimer','Disclaimer','trim|xss_clean');
         $this->form_validation->set_rules('features','Features','');
-        $this->form_validation->set_rules('youtube','Youtube','');
-        $this->form_validation->set_rules('youtube_thumbnail','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_1','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_1','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_2','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_2','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_3','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_3','Youtube Thumbnail','');
+        $this->form_validation->set_rules('installation_pdf','Installation PDF','');
         $this->form_validation->set_rules('color_code','Color Code','required');
         $this->form_validation->set_rules('background_color','Background Color','required');
+        
 
         if($this->form_validation->run()){
             $filter = array('model_no'=>$this->input->post('model_no'));
 
             $checkMenu = $this->AdminModel->getDetails('products',$filter);
          
-                     
+                     $image = '';
+                    $youtube_thumbnail_1 = '';
+                    $youtube_thumbnail_2 = '';
+                    $youtube_thumbnail_3 = '';
+                    $installation_pdf = '';
+
                     if(isset($_FILES)){
+
+
                         $upload = upload_product_image($_FILES,'file');
 
                         if($upload['errCode'] == -1){
@@ -198,20 +211,52 @@ class Product extends CI_Controller {
                             echo json_encode($returnArr);exit;
                         }
 
+                        if(!empty($_FILES['youtube_thumbnail_1']['name'])){
+                            $youtube_thumbnail_1 = upload_image($_FILES,'youtube_thumbnail_1');
 
-                        $thumbnail = upload_image($_FILES,'youtube_thumbnail');
-
-                        if($upload['errCode'] == -1){
-                            $youtube_thumbnail = $thumbnail['image'];
-                        }else{
-                            $returnArr['errCode']      = 3;
-                            $returnArr['message']['image']      = $thumbnail['image'];
-                            echo json_encode($returnArr);exit;
+                            if($youtube_thumbnail_1['errCode'] == -1){
+                                $youtube_thumbnail_1 = $youtube_thumbnail_1['image'];
+                            }else{
+                                $returnArr['errCode']      = 3;
+                                $returnArr['message']['youtube_thumbnail_1']      = $youtube_thumbnail_1['image'];
+                                echo json_encode($returnArr);exit;
+                            }
                         }
-                    }else{
-                        $image = '';
-                        $youtube_thumbnail = '';
+
+                        if(!empty($_FILES['youtube_thumbnail_2']['name'])){
+                            $youtube_thumbnail_2 = upload_image($_FILES,'youtube_thumbnail_2');
+                            if($youtube_thumbnail_2['errCode'] == -1){
+                                $youtube_thumbnail_2 = $youtube_thumbnail_2['image'];
+                            }else{
+                                $returnArr['errCode']      = 3;
+                                $returnArr['message']['youtube_thumbnail_2']      = $youtube_thumbnail_2['image'];
+                                echo json_encode($returnArr);exit;
+                            }
+                        }
+
+                        if(!empty($_FILES['youtube_thumbnail_3']['name'])){
+                            $youtube_thumbnail_3 = upload_image($_FILES,'youtube_thumbnail_3');
+                            if($youtube_thumbnail_3['errCode'] == -1){
+                                $youtube_thumbnail_3 = $youtube_thumbnail_3['image'];
+                            }else{
+                                $returnArr['errCode']      = 3;
+                                $returnArr['message']['youtube_thumbnail_3']      = $youtube_thumbnail_3['image'];
+                                echo json_encode($returnArr);exit;
+                            }
+                        }
+
+                        if(!empty($_FILES['installation_pdf']['name'])){
+                            $installation_pdf = upload_image($_FILES,'installation_pdf');
+                            if($installation_pdf['errCode'] == -1){
+                                $installation_pdf = $installation_pdf['image'];
+                            }else{
+                                $returnArr['errCode']      = 3;
+                                $returnArr['message']['installation_pdf']      = $installation_pdf['image'];
+                                echo json_encode($returnArr);exit;
+                            }
+                        }
                     }
+
 
                     $model_no = $this->input->post('model_no');
                     $data = array('model_no'    =>$this->input->post('model_no'),
@@ -228,21 +273,37 @@ class Product extends CI_Controller {
                                   'disclaimer' =>$this->input->post('disclaimer'),
                                   'color_code' =>$this->input->post('color_code'),
                                   'background_color'=>$this->input->post('background_color'),
-                                  'tags'       =>str_replace(['-', ':', '/'], '', $model_no)
+                                  'tags'       =>str_replace(['-', ':', '/'], '', $model_no),
+                                  'installation_pdf' => $installation_pdf
                               );
 
                     $id = $this->AdminModel->insert('products',$data);
 
                     if($id){
 
-                        $video_data = array('product_id'=>$id,
-                                            'product_images'=>$youtube_thumbnail,
-                                            'video' =>$this->input->post('youtube'),
+
+                        $video_data[] = array('product_id'=>$id,
+                                            'product_images'=>$youtube_thumbnail_1,
+                                            'video' =>$this->input->post('youtube_1'),
                                             'type'=>'2',
                                             'status'=>'1'
                                         );
 
-                        $this->db->insert('product_images',$video_data);
+                        $video_data[] = array('product_id'=>$id,
+                                            'product_images'=>$youtube_thumbnail_2,
+                                            'video' =>$this->input->post('youtube_2'),
+                                            'type'=>'2',
+                                            'status'=>'1'
+                                        );
+
+                        $video_data[] = array('product_id'=>$id,
+                                            'product_images'=>$youtube_thumbnail_3,
+                                            'video' =>$this->input->post('youtube_3'),
+                                            'type'=>'2',
+                                            'status'=>'1'
+                                        );
+
+                        $this->AdminModel->insertBatch('product_images',$video_data);
 
                         $returnArr['errCode']     = -1;
                         $returnArr['product_id']  = $id;
@@ -295,11 +356,14 @@ class Product extends CI_Controller {
 
             $video_filter = array('product_id'=>$this->uri->segment(3),
                                   'type'=>'2');
-            $youtube_details = $this->AdminModel->getDetails('product_images',$video_filter);
+            $youtube_details = $this->AdminModel->getList('product_images',$video_filter);
             
-            $data['youtube_thumbnail'] = $youtube_details['product_images'];
-            $data['youtube'] = $youtube_details['video'];
+            foreach($youtube_details as $key => $row){
+                $data['youtube_thumbnail_'.++$key] = $row['product_images'];
+                $data['youtube_'.$key] = $row['video'];
+            }
 
+           
 
             $this->load->view('product/editProduct',$data);
 
@@ -316,8 +380,12 @@ class Product extends CI_Controller {
         $this->form_validation->set_rules('other_information','Other Information','trim|xss_clean');
         $this->form_validation->set_rules('disclaimer','Disclaimer','trim|xss_clean');
         $this->form_validation->set_rules('features','Features','');
-        $this->form_validation->set_rules('youtube','Youtube','');
-        $this->form_validation->set_rules('youtube_thumbnail','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_1','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_1','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_2','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_2','Youtube Thumbnail','');
+        $this->form_validation->set_rules('youtube_3','Youtube','');
+        $this->form_validation->set_rules('youtube_thumbnail_3','Youtube Thumbnail','');
         $this->form_validation->set_rules('id','Id','required|trim|xss_clean|max_length[255]');
         $this->form_validation->set_rules('color_code','Color Code','required');
         $this->form_validation->set_rules('background_color','Background Color','required');
@@ -351,19 +419,64 @@ class Product extends CI_Controller {
                 }
 
                 //
-                if(isset($_FILES['new_thumbnail']['name']) && !empty($_FILES['new_thumbnail']['name'])){
+                if(isset($_FILES['new_thumbnail_1']['name']) && !empty($_FILES['new_thumbnail_1']['name'])){
 
-                    $thumbnail = upload_image($_FILES,'new_thumbnail');
+                    $youtube_thumbnail_1 = upload_image($_FILES,'new_thumbnail_1');
 
-                    if($thumbnail['errCode'] == -1){
-                        $youtube_thumbnail = $thumbnail['image'];
+                    if($youtube_thumbnail_1['errCode'] == -1){
+                        $youtube_thumbnail_1 = $youtube_thumbnail_1['image'];
                     }else{
                         $returnArr['errCode']      = 3;
-                        $returnArr['messages']['image']      = $thumbnail['image'];
+                        $returnArr['messages']['image']      = $youtube_thumbnail_1['image'];
                         echo json_encode($returnArr);exit;
                     }
                 }else{
-                    $youtube_thumbnail = $this->input->post('old_thumbnail');
+                    $youtube_thumbnail_1 = $this->input->post('old_thumbnail_1');
+                }
+
+                if(isset($_FILES['new_thumbnail_2']['name']) && !empty($_FILES['new_thumbnail_2']['name'])){
+
+                    $youtube_thumbnail_2 = upload_image($_FILES,'new_thumbnail_2');
+
+                    if($youtube_thumbnail_2['errCode'] == -1){
+                        $youtube_thumbnail_2 = $youtube_thumbnail_2['image'];
+                    }else{
+                        $returnArr['errCode']      = 3;
+                        $returnArr['messages']['image']      = $youtube_thumbnail_2['image'];
+                        echo json_encode($returnArr);exit;
+                    }
+                }else{
+                    $youtube_thumbnail_2 = $this->input->post('old_thumbnail_2');
+                }
+
+                if(isset($_FILES['new_thumbnail_3']['name']) && !empty($_FILES['new_thumbnail_3']['name'])){
+
+                    $youtube_thumbnail_3 = upload_image($_FILES,'new_thumbnail_3');
+
+                    if($youtube_thumbnail_3['errCode'] == -1){
+                        $youtube_thumbnail_3 = $youtube_thumbnail_3['image'];
+                    }else{
+                        $returnArr['errCode']      = 3;
+                        $returnArr['messages']['image']      = $youtube_thumbnail_3['image'];
+                        echo json_encode($returnArr);exit;
+                    }
+                }else{
+                    $youtube_thumbnail_3 = $this->input->post('old_thumbnail_3');
+                }
+
+                if(isset($_FILES['installation_pdf']['name']) && !empty($_FILES['installation_pdf']['name'])){
+
+                    $installation_pdf = upload_image($_FILES,'installation_pdf');
+
+                    if($installation_pdf['errCode'] == -1){
+                        $installation_pdf = $installation_pdf['image'];
+                    }else{
+                        $returnArr['errCode']      = 3;
+                        $returnArr['messages']['image']      = $installation_pdf['image'];
+                        echo json_encode($returnArr);exit;
+                    }
+                }else{
+                    $installation_pdf = $this->input->post('old_installation_pdf');
                 }
 
 
@@ -382,7 +495,8 @@ class Product extends CI_Controller {
                                   'other_information' =>$this->input->post('other_information'),
                                   'disclaimer' =>$this->input->post('disclaimer'),
                                   'color_code' =>$this->input->post('color_code'),
-                                  'background_color' =>$this->input->post('background_color')
+                                  'background_color' =>$this->input->post('background_color'),
+                                  'installation_pdf' => $installation_pdf
                               );
 
                 $updateMenu = $this->AdminModel->update('products',$filter,$data);
@@ -400,30 +514,34 @@ class Product extends CI_Controller {
 
                 if($updateMenu){
 
-                    if(!empty($this->input->post('youtube'))){
-                        $video_filter = array('product_id'=>$this->input->post('id'),
-                                            'type'      =>'2');
+                    $video_filter = array('product_id'=>$this->input->post('id'),
+                                        'type'      =>'2');
 
-                        $video = $this->AdminModel->getDetails('product_images',$video_filter);
-                        if($video){
-                            $video_data   = array('product_images'=>$youtube_thumbnail,
-                                              'video'         =>$this->input->post('youtube')
-                                          );
+                    $video = $this->AdminModel->delete('product_images',$video_filter);
+                    
+                    $video_data[] = array('product_id'=>$this->input->post('id'),
+                                        'product_images'=>$youtube_thumbnail_1,
+                                        'video' =>$this->input->post('youtube_1'),
+                                        'type'=>'2',
+                                        'status'=>'1'
+                                    );
 
-                          $this->AdminModel->update('product_images',$video_filter,$video_data);
+                    $video_data[] = array('product_id'=>$this->input->post('id'),
+                                        'product_images'=>$youtube_thumbnail_2,
+                                        'video' =>$this->input->post('youtube_2'),
+                                        'type'=>'2',
+                                        'status'=>'1'
+                                    );
 
-                        }else{
-                            $video_data   = array('product_id'   =>$this->input->post('id'),
-                                                  'product_images'=>$youtube_thumbnail,
-                                                  'type'          =>'2',
-                                                  'video'         =>$this->input->post('youtube'),
-                                                  'status'        =>'1'
-                                                
-                                          );
+                    $video_data[] = array('product_id'=>$this->input->post('id'),
+                                        'product_images'=>$youtube_thumbnail_3,
+                                        'video' =>$this->input->post('youtube_3'),
+                                        'type'=>'2',
+                                        'status'=>'1'
+                                    );
 
-                        $this->AdminModel->insert('product_images',$video_data);
-                        }
-                    }   
+                    $this->AdminModel->insertBatch('product_images',$video_data);
+                     
                     
                     $returnArr['errCode']     = -1;
                     $returnArr['product_id']  = $this->input->post('id');

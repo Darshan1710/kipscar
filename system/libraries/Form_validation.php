@@ -89,7 +89,7 @@ class CI_Form_validation {
 	 *
 	 * @var string
 	 */
-	protected $_error_prefix	= '<p>';
+	protected $_error_prefix	= '<p class="error">';
 
 	/**
 	 * End tag for error wrapping
@@ -309,7 +309,7 @@ class CI_Form_validation {
 	 * @param	string
 	 * @return	CI_Form_validation
 	 */
-	public function set_error_delimiters($prefix = '<p>', $suffix = '</p>')
+	public function set_error_delimiters($prefix = '<p class="error">', $suffix = '</p>')
 	{
 		$this->_error_prefix = $prefix;
 		$this->_error_suffix = $suffix;

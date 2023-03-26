@@ -1220,8 +1220,12 @@ class CI_Image_lib {
 		// make a best guess as to whether we're dealing with an image with alpha transparency or no/binary transparency
 		if ($alpha > 0)
 		{
+			$x_axis = intval($x_axis);
+			$y_axis = intval($y_axis);
+			$wm_width = intval($wm_width);
+			$wm_height = intval($wm_height);
 			// copy the image directly, the image's alpha transparency being the sole determinant of blending
-			imagecopy($src_img, $wm_img, $x_axis, $y_axis, 0, 0, $wm_width, $wm_height);
+			intval(imagecopy($src_img, $wm_img, $x_axis, $y_axis, 0, 0, $wm_width, $wm_height));
 		}
 		else
 		{
@@ -1835,7 +1839,7 @@ class CI_Image_lib {
 	 * @param	string
 	 * @return	string
 	 */
-	public function display_errors($open = '<p>', $close = '</p>')
+	public function display_errors($open = '<p class="error">', $close = '</p>')
 	{
 		return (count($this->error_msg) > 0) ? $open.implode($close.$open, $this->error_msg).$close : '';
 	}

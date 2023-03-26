@@ -153,34 +153,80 @@
                                 <input type="hidden"  class="form-control old_image" name="old_image" value="<?php echo $image = empty($product['image']) ? set_value('old_image') : $product['image']?>">
                             </div>
                             <div class="col-sm-3">
-                                <label>Youtube Thumbnail ( 1097 x 900)</label>
-                                 <?php if(!empty($youtube_thumbnail)){ ?>
+                                <label>Youtube Thumbnail 1( 1097 x 900)</label>
+                                 <?php if(!empty($youtube_thumbnail_1)){ ?>
 
                                  
-                                <img class="youtube_thumbnail" width="50px" height="50px" src="<?php echo $youtube_thumbnail_data = !empty($youtube_thumbnail)  ? base_url().$youtube_thumbnail  : 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg'; ?>">
+                                <img class="youtube_thumbnail_1" width="50px" height="50px" src="<?php echo $youtube_thumbnail_data_1 = !empty($youtube_thumbnail_1)  ? base_url().$youtube_thumbnail_1  : 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg'; ?>">
                                 <button class="btn btn-sm btn-primary change_thumbnail" type="button">Change Image</button>
                                 <?php } ?>
-                                <input type="<?php echo  $e = isset($youtube_thumbnail) && !empty($youtube_thumbnail) ? 'hidden' : 'file' ?>" name="new_thumbnail" class="new_thumbnail">
+                                <input type="<?php echo  $e = isset($youtube_thumbnail_1) && !empty($youtube_thumbnail_1) ? 'hidden' : 'file' ?>" name="new_thumbnail_1" class="new_thumbnail_1">
                                 
-                                <input type="hidden"  class="form-control old_thumbnail" name="old_thumbnail" value="<?php echo $youtube_thumbnail = empty($youtube_thumbnail) ? set_value('youtube_thumbnail') : $youtube_thumbnail?>">
+                                <input type="hidden"  class="form-control old_thumbnail_1" name="old_thumbnail_1" value="<?php echo $youtube_thumbnail_1 = empty($youtube_thumbnail_1) ? set_value('youtube_thumbnail_1') : $youtube_thumbnail_1 ?>">
                             </div>
                             <div class="col-sm-3">
-                                <label>Youtube</label>
-                                <input type="text" placeholder="Youtube" class="form-control youtube" name="youtube" value="<?php echo set_value('youtube',isset($youtube) ? $youtube : '')?>">
+                                <label>Youtube 1</label>
+                                <input type="text" placeholder="Youtube 1" class="form-control youtube_1" name="youtube_1" value="<?php echo set_value('youtube_1',isset($youtube_1) ? $youtube_1 : '')?>">
                             </div>
                             <div class="col-sm-3">
-                                <label>MRP</label>
-                                <input type="text" placeholder="MRP" class="form-control mrp" name="mrp" value="<?php echo set_value('mrp',isset($product['mrp']) ? $product['mrp'] : '')?>">
+                                <label>Youtube Thumbnail 2( 1097 x 900)</label>
+                                 <?php if(!empty($youtube_thumbnail_2)){ ?>
+
+                                 
+                                <img class="youtube_thumbnail_2" width="50px" height="50px" src="<?php echo $youtube_thumbnail_data_2 = !empty($youtube_thumbnail_2)  ? base_url().$youtube_thumbnail_2  : 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg'; ?>">
+                                <button class="btn btn-sm btn-primary change_thumbnail_2" type="button">Change Image</button>
+                                <?php } ?>
+                                <input type="<?php echo  $e = isset($youtube_thumbnail_2) && !empty($youtube_thumbnail_2) ? 'hidden' : 'file' ?>" name="new_thumbnail_2" class="new_thumbnail_2">
+                                
+                                <input type="hidden"  class="form-control old_thumbnail_2" name="old_thumbnail_2" value="<?php echo $youtube_thumbnail_2 = empty($youtube_thumbnail_2) ? set_value('youtube_thumbnail_2') : $youtube_thumbnail_2 ?>">
+                            </div> 
+                            
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label>Youtube 2</label>
+                                <input type="text" placeholder="Youtube 2" class="form-control youtube_2" name="youtube_2" value="<?php echo set_value('youtube_2',isset($youtube_2) ? $youtube_2 : '')?>">
                             </div>
-                            
-                            
+                            <div class="col-sm-3">
+                                <label>Youtube Thumbnail 3( 1097 x 900)</label>
+                                 <?php if(!empty($youtube_thumbnail_3)){ ?>
+
+                                 
+                                <img class="youtube_thumbnail_3" width="50px" height="50px" src="<?php echo $youtube_thumbnail_data_3 = !empty($youtube_thumbnail_3)  ? base_url().$youtube_thumbnail_3  : 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg'; ?>">
+                                <button class="btn btn-sm btn-primary change_thumbnail_3" type="button">Change Image</button>
+                                <?php } ?>
+                                <input type="<?php echo  $e = isset($youtube_thumbnail_3) && !empty($youtube_thumbnail_3) ? 'hidden' : 'file' ?>" name="new_thumbnail_3" class="new_thumbnail_3">
+                                
+                                <input type="hidden"  class="form-control old_thumbnail_3" name="old_thumbnail_3" value="<?php echo $youtube_thumbnail_3 = empty($youtube_thumbnail_3) ? set_value('youtube_thumbnail_3') : $youtube_thumbnail_3 ?>">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Youtube 3</label>
+                                <input type="text" placeholder="Youtube 3" class="form-control youtube_3" name="youtube_3" value="<?php echo set_value('youtube_3',isset($youtube_3) ? $youtube_3 : '')?>">
+                            </div>
+                             
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="row">
-                            
-                            
+                            <div class="col-sm-3">
+                                <label>Installation PDF</label><br>
+                                 <?php if(!empty($product['installation_pdf'])){ ?>
+
+                                
+                                <a href="<?php echo $product['installation_pdf'] = !empty($product['installation_pdf'])  ? base_url().$product['installation_pdf'] : ''?>" class="btn btn-sm btn-primary view_pdf"  type="button" target="_blank">View PDF Image</a>
+                                <button class="btn btn-sm btn-primary change_pdf" type="button">Change PDF</button>
+                                <?php } ?>
+                                <input type="<?= isset($product['installation_pdf']) && !empty($product['installation_pdf']) ? 'hidden' : 'file' ?>" name="installation_pdf" class="installation_pdf">
+                                
+                                <input type="hidden"  class="form-control old_installation_pdf" name="old_installation_pdf" value="<?= empty($product['installation_pdf']) ? set_value('old_installation_pdf') : $product['installation_pdf']?>">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>MRP</label>
+                                <input type="text" placeholder="MRP" class="form-control mrp" name="mrp" value="<?php echo set_value('mrp',isset($product['mrp']) ? $product['mrp'] : '')?>">
+                            </div>
                             <div class="col-sm-3">
                                 <label>MRP Color</label>
                                 <select class="form-control select color_code" name="color_code">
@@ -331,10 +377,29 @@
         $('.change_image').css('display','none');
       });
 
-        $('.change_thumbnail').on('click',function(){
-        $('.youtube_thumbnail').css('display','none');
-        $('.new_thumbnail').attr('type','file');
-        $('.change_thumbnail').css('display','none');
+        $('.change_thumbnail_1').on('click',function(){
+        $('.youtube_thumbnail_1').css('display','none');
+        $('.new_thumbnail_1').attr('type','file');
+        $('.change_thumbnail_1').css('display','none');
+      });
+
+        $('.change_thumbnail_2').on('click',function(){
+        $('.youtube_thumbnail_2').css('display','none');
+        $('.new_thumbnail_2').attr('type','file');
+        $('.change_thumbnail_2').css('display','none');
+      });
+
+        $('.change_thumbnail_3').on('click',function(){
+        $('.youtube_thumbnail_3').css('display','none');
+        $('.new_thumbnail_3').attr('type','file');
+        $('.change_thumbnail_3').css('display','none');
+      });
+
+        $('.change_pdf').on('click',function(){
+        $('.view_pdf').css('display','none');
+        $('.change_pdf').css('display','none');
+        $('.installation_pdf').attr('type','file');
+        $('.old_installation_pdf').css('display','none');
       });
 
     });

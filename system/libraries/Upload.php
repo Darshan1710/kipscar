@@ -449,6 +449,7 @@ class CI_Upload {
 		$this->file_temp = $_file['tmp_name'];
 		$this->file_size = $_file['size'];
 
+
 		// Skip MIME type detection?
 		if ($this->detect_mime !== FALSE)
 		{
@@ -460,6 +461,7 @@ class CI_Upload {
 		$this->file_name = $this->_prep_filename($_file['name']);
 		$this->file_ext	 = $this->get_extension($this->file_name);
 		$this->client_name = $this->file_name;
+
 
 		// Is the file type allowed to be uploaded?
 		if ( ! $this->is_allowed_filetype())
@@ -579,6 +581,7 @@ class CI_Upload {
 		 * file was an image). We use this information
 		 * in the "data" function.
 		 */
+
 		$this->set_image_properties($this->upload_path.$this->file_name);
 
 		return TRUE;
@@ -1171,7 +1174,7 @@ class CI_Upload {
 	 * @param	string	$close
 	 * @return	string
 	 */
-	public function display_errors($open = '<p>', $close = '</p>')
+	public function display_errors($open = '<p class="error">', $close = '</p>')
 	{
 		return (count($this->error_msg) > 0) ? $open.implode($close.$open, $this->error_msg).$close : '';
 	}

@@ -101,12 +101,13 @@ if(!function_exists('upload_image')){
         $ci =& get_instance();
 
         $config1['upload_path']   = 'uploads/';
-        $config1['allowed_types'] = 'gif|jpg|png|jpeg|gif|svg';
+        $config1['allowed_types'] = 'gif|jpg|png|jpeg|gif|svg|pdf';
         $config1['max_size']      = '*';
         $config1['max_width']     = '*';
         $config1['max_height']    = '*';
         $config1['file_name']     = time().$_FILES[$name]['name'];
         $ci->load->library('upload', $config1);
+        $ci->upload->initialize($config1);
         if (!$ci->upload->do_upload($name)){
             $error = $ci->upload->display_errors();
             $data['errCode'] = 2;
@@ -162,6 +163,7 @@ if(!function_exists('upload_product_image')){
         $config1['max_height']    = '*';
         $config1['file_name']     = time().$_FILES[$name]['name'];
         $ci->load->library('upload', $config1);
+        $ci->upload->initialize($config1);
         if (!$ci->upload->do_upload($name)){
             $error = $ci->upload->display_errors();
             $data['errCode'] = 2;

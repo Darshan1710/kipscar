@@ -392,8 +392,14 @@ class Allwebservices extends CI_Controller {
                 $image_data[$i]['video'] = $im['video'];
                 $i++;
             }
-            $product['images'] = $image_data;
-
+            if(!empty($images_data)){
+                $product['images'] = $image_data;
+            }else{
+                $images_data[0]['image'] = base_url().$product['image'];
+                $images_data[0]['image'] = 1;
+                $images_data[0]['video_android'] = '';
+                $images_data[0]['video'] = null; 
+            }
             //video
             $v_filter = array('product_id'=>$product_id,'type'=>'2','status'=>'1');
             $video   = $this->AdminModel->getDetails('product_images',$v_filter);

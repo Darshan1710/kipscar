@@ -188,15 +188,15 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-3">
-                                <label>Model No</label>
+                                <label class="required">Model No</label>
                                 <input type="text" placeholder="Model No" class="form-control" name="model_no" id="model_no">
                             </div>
                             <div class="col-sm-3">
-                                <label>Vehicale Name</label>
+                                <label class="required">Vehicale Name</label>
                                 <input type="text" placeholder="Vehicale Name" class="form-control" name="vehicale_name" id="vehicale_name">
                             </div>
                             <div class="col-sm-3">
-                                <label>Brand</label>
+                                <label class="required">Brand</label>
                                 <select class="form-control select" name="brand_id" id="brand_id">
                                     <option value="">Please Select Category</option>
                                     <?php foreach($brand as $b){?>
@@ -205,7 +205,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-3">
-                                <label>Category</label>
+                                <label class="required">Category</label>
                                 <select class="form-control select" name="category_id" id="category_id">
                                     <option value="">Please Select Category</option>
                                     <?php foreach($category as $row){?>
@@ -221,27 +221,51 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-3">
-                                <label>Product Image (1097 x 900)</label>
+                                <label class="required">Product Image (1097 x 900)</label>
                                 <input type="file" name="file" class="form-control" id="file">
                             </div>
                             <div class="col-sm-3">
-                                <label>Youtube Thumbnail (1097 x 900)</label>
-                                <input type="file" name="youtube_thumbnail" class="form-control" id="youtube_thumbnail">
+                                <label>Youtube Thumbnail 1(1097 x 900)</label>
+                                <input type="file" name="youtube_thumbnail_1" class="form-control" id="youtube_thumbnail_1">
                             </div>
                             <div class="col-sm-3">
-                                <label>Youtube</label>
-                                <input type="text" name="youtube" class="form-control" id="youtube">
+                                <label>Youtube Video 1</label>
+                                <input type="text" name="youtube_1" class="form-control" id="youtube_1">
                             </div>
                             <div class="col-sm-3">
-                                <label>MRP</label>
-                                <input type="number" name="mrp" class="form-control" id="mrp">
+                                <label>Youtube Thumbnail 2(1097 x 900)</label>
+                                <input type="file" name="youtube_thumbnail_2" class="form-control" id="youtube_thumbnail_2">
                             </div>
                             
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label>Youtube Video 2</label>
+                                <input type="text" name="youtube_2" class="form-control" id="youtube_2">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Youtube Thumbnail 3(1097 x 900)</label>
+                                <input type="file" name="youtube_thumbnail_3" class="form-control" id="youtube_thumbnail_3">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Youtube Video 1</label>
+                                <input type="text" name="youtube_3" class="form-control" id="youtube_3">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Installation PDF</label>
+                                <input type="file" name="installation_pdf" class="form-control" id="installation_pdf">
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="row">
+                            <div class="col-sm-3">
+                                <label class="required">MRP</label>
+                                <input type="number" name="mrp" class="form-control" id="mrp">
+                            </div>
                             <div class="col-sm-3">
                                 <label>MRP Color</label>
                                 <select class="form-control select" name="color_code" id="color_code">
@@ -701,6 +725,7 @@ function MyCustomUploadAdapterPlugin( editor ) {
                 url: base_url + 'Product/addProduct',
                 success: function(data) {
                     var obj = $.parseJSON(data);
+                    $('.error').remove();
                     if (obj.errCode == -1) {
                         alert(obj.message);
                         if(confirm('Do you want to add product in different brand?')){
@@ -711,10 +736,10 @@ function MyCustomUploadAdapterPlugin( editor ) {
                     } else if (obj.errCode == 2) {
                         alert(obj.message);
                     } else if (obj.errCode == 3) {
-                        $('.error').remove();
+                        
                         $.each(obj.message, function(key, value) {
                             var element = $('#' + key);
-                            if(key == 'status' || key == 'category_id'){
+                            if(key == 'status' || key == 'category_id' || key == 'brand_id'){
                                 element.closest('.select').next('.select2').after(value);
                             }else{
                                 element.closest('.form-control').after(value);
