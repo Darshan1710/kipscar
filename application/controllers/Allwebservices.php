@@ -432,6 +432,7 @@ class Allwebservices extends CI_Controller {
             }
 
             $product['conditions'] = $n_conditions;
+            $product['installation_pdf'] = !empty($product['installation_pdf']) ? base_url().$product['installation_pdf'] : ""; 
         
             //add activity
           //  $this->addActivity('product_details',$product_id,$product['mrp']);
