@@ -11,6 +11,8 @@ class Allwebservices extends CI_Controller {
      public function sendOTP(){ 
         $this->form_validation->set_rules('country_code','Country Code','required');
         $this->form_validation->set_rules('mobile','Mobile','required|numeric');
+        $this->form_validation->set_rules('device','','');
+        $this->form_validation->set_rules('os_version','Version','');
 
         $this->form_validation->set_error_delimiters('<p class="error">','</p>');
         if($this->form_validation->run()){
@@ -61,12 +63,16 @@ class Allwebservices extends CI_Controller {
 
             if(!empty($number_exists)){
 
-                $data = array('otp'   =>$otp);
+                $data = array('otp'   =>$otp,
+                              'device'=>$input_data['device'],
+                              'os_version'=>$input_data['os_version']);
                 $result = $this->AdminModel->update('otp',$filter,$data);
 
             }else{
                 $data = array('mobile'=>$input_data['country_code'].$mobile,
-                              'otp'   =>$otp);
+                              'otp'   =>$otp,
+                              'device'=>$input_data['device'],
+                              'os_version'=>$input_data['os_version']);
 
                 $result = $this->AdminModel->insert('otp',$data);  
             }
@@ -88,7 +94,7 @@ class Allwebservices extends CI_Controller {
     }
 
 ////
-    public function verifiedOTP(){ 
+    public function verifiedOTP(){
         $this->form_validation->set_rules('mobile','Mobile','required|numeric');
         $this->form_validation->set_rules('otp','OTP','required|numeric');
         $this->form_validation->set_error_delimiters('<p class="error">','</p>');
