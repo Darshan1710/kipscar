@@ -186,6 +186,57 @@ class Allwebservices extends CI_Controller {
         echo json_encode($returnArr);   
     }
 
+    //new registraion for android 13
+    public function registerWithEncryption(){ 
+        $this->form_validation->set_rules('mobile','Mobile','required');
+        $this->form_validation->set_rules('name','Name','required|xss_clean|max_length[500]');
+        $this->form_validation->set_rules('email','Email','xss_clean|max_length[500]');
+        $this->form_validation->set_rules('companyname','Company / Shopname','xss_clean|max_length[500]');
+        $this->form_validation->set_error_delimiters('<p class="error">','</p>');
+        if($this->form_validation->run()){
+            $input_data = $this->input->post();
+
+                $e_filter = ' mobile = "'.$input_data['mobile'].'"';
+                $email_exists = $this->AdminModel->getDetails('customers',$e_filter);
+                if(!$email_exists){
+                    $filter = array('name'=>aes_decryption($input_data['name']),
+                            'email'   =>aes_decryption($input_data['email']),
+                            'mobile'  =>aes_decryption($input_data['mobile']),
+                            'companyname'=>aes_decryption($input_data['companyname'])
+                        );
+
+                    $result = $this->AdminModel->insert('customers',$filter);
+                    if($result){
+                        $returnArr['error'] = false;
+                        $returnArr['message'] = 'Success';
+                        $returnArr['user_id'] = $result;
+                        $returnArr['mobile']  = $input_data['mobile'];
+                        $returnArr['name']   = $input_data['name'];
+                    }else{
+                        $returnArr['error'] = true;
+                        $returnArr['message'] = 'Please try again';
+                        $returnArr['user_id'] = '';
+                        $returnArr['mobile']  = $input_data['mobile'];
+                        $returnArr['name']   = $input_data['name'];
+                    }
+                }else{
+                    $returnArr['error'] = true;
+                    $returnArr['message'] = 'Mobile already exists';
+                    $returnArr['user_id'] = '';
+                    $returnArr['mobile']  = $input_data['mobile'];
+                    $returnArr['name']   = $input_data['name'];
+                }
+            
+        }else{
+            $returnArr['error'] = true;
+            $returnArr['message'] = 'Inputs are invalid';
+            $returnArr['user_id'] = '';
+            $returnArr['mobile']  = '';
+            $returnArr['name']   = '';
+        }
+        echo json_encode($returnArr);   
+    }
+
     public function appHomePage(){ 
         $this->form_validation->set_rules('id','Id','required|numeric');
         $this->form_validation->set_error_delimiters('<p class="error">','</p>');
