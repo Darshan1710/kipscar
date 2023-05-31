@@ -229,16 +229,13 @@ if (!function_exists('display_gallery_image')) {
 
 if(!function_exists('aes_encryption')){
     function aes_encryption($plainText){
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+        $iv = '1234567891011121';
 
         // Encrypt the data
-        $cipherText = openssl_encrypt($plainText, 'aes-256-cbc', '7W9JdoGEuWiV5EFdQxdyE+PYnj7WnkfeMhb3xU5', OPENSSL_RAW_DATA, $iv);
-
-        // Combine the initialization vector and encrypted data
-        $encryptedData = $iv . $cipherText;
-
+        $cipherText = openssl_encrypt($plainText, 'aes-256-cbc', '7W9JdoGEuWiV5EFdQxdyE+PYnj7Wnkfe', OPENSSL_RAW_DATA, $iv);
+        
         // Encode the encrypted data as base64
-        return base64_encode($encryptedData);
+        return base64_encode($cipherText);
         
     }
 }
@@ -248,11 +245,10 @@ if(!function_exists('aes_decryption')){
         $encryptedData = base64_decode($encryptedData);
 
         // Extract the initialization vector and encrypted data
-        $iv = substr($encryptedData, 0, openssl_cipher_iv_length('aes-256-cbc'));
-        $cipherText = substr($encryptedData, openssl_cipher_iv_length('aes-256-cbc'));
+        $iv = '1234567891011121';
 
         // Decrypt the data
-        return openssl_decrypt($cipherText, 'aes-256-cbc', '7W9JdoGEuWiV5EFdQxdyE+PYnj7WnkfeMhb3xU5', OPENSSL_RAW_DATA, $iv);
+        return openssl_decrypt($encryptedData, 'aes-256-cbc', '7W9JdoGEuWiV5EFdQxdyE+PYnj7Wnkfe', OPENSSL_RAW_DATA, $iv);
         
     }
 }
