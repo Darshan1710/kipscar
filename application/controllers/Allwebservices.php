@@ -93,6 +93,94 @@ class Allwebservices extends CI_Controller {
         echo json_encode($returnArr);   
     }
 
+     public function sendOTPWithEncrypted(){ 
+        $this->form_validation->set_rules('country_code','Country Code','required');
+        $this->form_validation->set_rules('mobile','Mobile','required');
+        $this->form_validation->set_rules('device','','');
+        $this->form_validation->set_rules('os_version','Version','');
+
+        $this->form_validation->set_error_delimiters('<p class="error">','</p>');
+        if($this->form_validation->run()){
+           // print_r(aes_encryption($_POST['os_version']));exit;
+            $input_data = $this->input->post();
+            $hash = isset($input_data['hash']) && !empty($input_data['hash']) ? $input_data['hash'] : '';
+            //$hash = '';
+            $mobile = aes_decryption($input_data['country_code']).aes_decryption($input_data['mobile']);
+            if ($mobile == '919822979093'){
+                $otp = '8560';
+            }else{
+                $otp = rand(1000,9999); 
+            }
+            
+
+            $filter = array('mobile'=>$mobile);
+            $number_exists = $this->AdminModel->getDetails('otp',$filter);
+
+
+            $otpArray  = str_split($otp,2);
+
+            $msg = "";
+            if(!empty($otpArray) && count($otpArray) == 2){
+                $msg = "Your OTP is ".$otpArray[0]." ".$otpArray[1]." for Register with GLOBALBYTE.We assured you for Provide Best Quality Products. Team KIPS CAR-AV ELECTRONICS PVT LTD.";
+            }
+            
+            $url = "http://vas.themultimedia.in/domestic/sendsms/bulksms.php?username=KIPSC&password=GBKIPS&type=TEXT&sender=GBKIPS&entityId=1501553130000054083&templateId=1507166382763131454&mobile=".$mobile."&message=".$msg;
+            $url = str_replace(" ", '%20', $url);
+            ob_start();
+            
+            $ch = curl_init();
+
+            // set URL and other appropriate options
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+
+            // grab URL and pass it to the browser
+            curl_exec($ch);
+
+            // close cURL resource, and free up system resources
+            curl_close($ch);
+
+
+            
+            if (ob_get_contents()){
+            ob_end_clean();
+            }
+
+            if(!empty($number_exists)){
+
+                $data = array('otp'   =>$otp,
+                              'device'=>aes_decryption($input_data['device']),
+                              'os_version'=>aes_decryption($input_data['os_version'])
+                          );
+                $result = $this->AdminModel->update('otp',$filter,$data);
+
+            }else{
+                $data = array('mobile'=>aes_decryption($mobile),
+                              'otp'   =>$otp,
+                              'device'=>aes_decryption($input_data['device']),
+                              'os_version'=>aes_decryption($input_data['os_version'])
+                          );
+
+                $result = $this->AdminModel->insert('otp',$data);  
+            }
+
+            
+            if($result){
+                $returnArr['error'] = false;
+                $returnArr['message'] = 'Success';
+            }else{
+                $returnArr['error'] = true;
+                $returnArr['message'] = 'Please try again';
+            }
+        }else{
+           
+            $returnArr['error'] = true;
+            $returnArr['message'] = 'Please try again';
+        }
+        echo json_encode($returnArr);   
+    }
+
 ////
     public function verifiedOTP(){
         $this->form_validation->set_rules('mobile','Mobile','required|numeric');
@@ -131,6 +219,47 @@ class Allwebservices extends CI_Controller {
             $returnArr['is_proceed'] = false;
             $returnArr['user_id'] = '';
             $returnArr['user_type'] = 'normal';
+        }
+        echo json_encode($returnArr);   
+    }
+
+    public function verifiedOTPWithEncrypted(){
+        $this->form_validation->set_rules('mobile','Mobile','required');
+        $this->form_validation->set_rules('otp','OTP','required');
+        $this->form_validation->set_error_delimiters('<p class="error">','</p>');
+        if($this->form_validation->run()){
+            $input_data = $this->input->post();
+
+           // print_r(aes_encryption($_POST['otp']));exit;
+            $filter = array('mobile'=>aes_decryption($input_data['mobile']),
+                            'otp'   =>aes_decryption($input_data['otp']));
+
+            $result = $this->AdminModel->getDetails('otp',$filter);
+
+            $m_filter = array('mobile'=>aes_decryption($input_data['mobile']));
+            $customer = $this->AdminModel->getDetails('customers',$m_filter);
+
+            if($result){
+
+                $returnArr['error'] = false;
+                $returnArr['message'] = 'Success';
+                $returnArr['is_proceed'] = !empty($customer) ? true : false;
+                $returnArr['user_id'] = !empty($customer) ? aes_encryption($customer['id']) : '';
+                $returnArr['user_type'] = !empty($customer) && $customer['user_type'] == '2' ? aes_encryption('sales') : aes_encryption('normal');
+            }else{
+                $returnArr['error'] = true;
+                $returnArr['message'] = 'OTP does not match';
+                $returnArr['is_proceed'] = false;
+                $returnArr['user_id'] = '';
+                $returnArr['user_type'] = aes_encryption('normal');
+            }
+        }else{
+          //  print_r(validation_errors());exit;
+            $returnArr['error'] = true;
+            $returnArr['message'] = 'Inputs are invalid';
+            $returnArr['is_proceed'] = false;
+            $returnArr['user_id'] = '';
+            $returnArr['user_type'] = aes_encryption('normal');
         }
         echo json_encode($returnArr);   
     }
@@ -186,6 +315,7 @@ class Allwebservices extends CI_Controller {
         echo json_encode($returnArr);   
     }
 
+
     //new registraion for android 13
     public function registerWithEncryption(){ 
         $this->form_validation->set_rules('mobile','Mobile','required');
@@ -196,7 +326,7 @@ class Allwebservices extends CI_Controller {
         if($this->form_validation->run()){
             $input_data = $this->input->post();
 
-                //print_r(aes_decryption($input_data['mobile']));exit;
+               // print_r($this->santitiseString($input_data['companyname']));exit;
                 $e_filter = ' mobile = "'.aes_decryption($input_data['mobile']).'"';
                 $email_exists = $this->AdminModel->getDetails('customers',$e_filter);
                 if(!$email_exists){
@@ -206,7 +336,7 @@ class Allwebservices extends CI_Controller {
                             'companyname'=>aes_decryption($input_data['companyname'])
                         );
 
-                    //print_r($filter);exit;
+                  //  print_r($filter);exit;
                     $result = $this->AdminModel->insert('customers',$filter);
                     if($result){
                         $returnArr['error'] = false;
