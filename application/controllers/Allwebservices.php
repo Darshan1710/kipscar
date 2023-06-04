@@ -106,6 +106,8 @@ class Allwebservices extends CI_Controller {
             $hash = isset($input_data['hash']) && !empty($input_data['hash']) ? $input_data['hash'] : '';
             //$hash = '';
             $mobile = aes_decryption($input_data['country_code']).aes_decryption($input_data['mobile']);
+
+           // print_r($mobile);exit;
             if ($mobile == '919822979093'){
                 $otp = '8560';
             }else{
@@ -136,10 +138,10 @@ class Allwebservices extends CI_Controller {
             curl_setopt($ch, CURLOPT_HEADER, 0);
 
             // grab URL and pass it to the browser
-            curl_exec($ch);
+            //curl_exec($ch);
 
             // close cURL resource, and free up system resources
-            curl_close($ch);
+           // curl_close($ch);
 
 
             
@@ -156,12 +158,12 @@ class Allwebservices extends CI_Controller {
                 $result = $this->AdminModel->update('otp',$filter,$data);
 
             }else{
-                $data = array('mobile'=>aes_decryption($mobile),
+                $data = array('mobile'=>$mobile,
                               'otp'   =>$otp,
                               'device'=>aes_decryption($input_data['device']),
                               'os_version'=>aes_decryption($input_data['os_version'])
                           );
-
+             //   print_r($data);exit;
                 $result = $this->AdminModel->insert('otp',$data);  
             }
 

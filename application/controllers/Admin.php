@@ -13,6 +13,111 @@ class Admin extends CI_Controller {
         $this->load->view('login');
     }
 
+    public function deleteUserForm(){
+        $this->load->view('deleteUserForm');   
+    }
+
+    public function sendOTP(){
+        $this->form_validation->set_rules('mobile','Mobile','required|numeric');
+        $this->form_validation->set_error_delimiters('<p class="error">','</p>');
+        if($this->form_validation->run()){
+            $input_data = $this->input->post();
+            
+            $mobile = $input_data['mobile'];
+           $otp = rand(1000,9999); 
+            
+            
+
+            $filter = array('mobile'=>$mobile);
+            $number_exists = $this->AdminModel->getDetails('otp',$filter);
+
+
+            $otpArray  = str_split($otp,2);
+
+            $msg = "";
+            if(!empty($otpArray) && count($otpArray) == 2){
+                $msg = "Your OTP is ".$otpArray[0]." ".$otpArray[1]." for Register with GLOBALBYTE.We assured you for Provide Best Quality Products. Team KIPS CAR-AV ELECTRONICS PVT LTD.";
+            }
+            
+            $url = "http://vas.themultimedia.in/domestic/sendsms/bulksms.php?username=KIPSC&password=GBKIPS&type=TEXT&sender=GBKIPS&entityId=1501553130000054083&templateId=1507166382763131454&mobile=".$mobile."&message=".$msg;
+            $url = str_replace(" ", '%20', $url);
+            ob_start();
+            
+            $ch = curl_init();
+
+            // set URL and other appropriate options
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+
+            // grab URL and pass it to the browser
+            curl_exec($ch);
+
+            // close cURL resource, and free up system resources
+            curl_close($ch);
+
+
+            
+            if (ob_get_contents()){
+            ob_end_clean();
+            }
+
+            if(!empty($number_exists)){
+
+                $data = array('otp'   =>$otp);
+                $result = $this->AdminModel->update('otp',$filter,$data);
+                if($result){
+                    $returnArr['error'] = false;
+                    $returnArr['message'] = 'Success';
+                }else{
+                    $returnArr['error'] = true;
+                    $returnArr['message'] = 'Please try again';
+                }
+            }else{
+                $returnArr['error'] = true;
+                $returnArr['message'] = 'Your Number does not exist';
+            }    
+        }else{
+           
+            $returnArr['error'] = true;
+            $returnArr['message'] = 'Please try again';
+        }
+        echo json_encode($returnArr);   
+    }
+
+    public function deleteUser(){
+        $this->form_validation->set_rules('mobile','Mobile','required|trim|xss_clean');
+        $this->form_validation->set_rules('otp','OTP','required|trim|xss_clean');
+        if($this->form_validation->run()){
+            $mobile = $this->input->post('mobile');
+            $otp = $this->input->post('otp');
+
+
+            $filter = array('mobile' => $mobile,
+                            'otp' =>$otp);
+
+
+            $result = $this->AdminModel->getDetails('otp',$filter);
+            if ($result) {
+
+                $filter1 = array('mobile'=>$mobile);
+                $this->AdminModel->delete('customers',$filter1);
+                //$this->db->last_query();exit;
+                $returnArr['error'] = false;
+                $returnArr['message'] = 'Success';
+            } else {
+                
+                $returnArr['error'] = true;
+                $returnArr['message'] = 'Please try again';
+            } 
+        }else{
+            
+            $returnArr['error'] = true;
+            $returnArr['message'] = 'Please try again';
+        }
+        echo json_encode($returnArr);
+    }
+
     public function registerView() {
         $this->load->view('register.php');
     }
