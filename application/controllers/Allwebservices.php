@@ -493,6 +493,128 @@ class Allwebservices extends CI_Controller {
         }
         echo json_encode($returnArr);   
     }
+
+    public function appHomePageWithEncryption(){ 
+        $this->form_validation->set_rules('id','Id','required|numeric');
+        $this->form_validation->set_error_delimiters('<p class="error">','</p>');
+        if($this->form_validation->run()){
+            $input_data = $this->input->post();
+
+            //update customer details
+            $customer_filter = array('id'=>$input_data['id']);
+            $customer_data = array('latitude'=>isset($input_data['latitude']) && !empty($input_data['latitude']) ? aes_decryption($input_data['latitude']) : '0',
+                                   'longitude'=>isset($input_data['longitude']) && !empty($input_data['longitude']) ? aes_decryption($input_data['longitude']) : '0',
+                                   'fcm_token'=>isset($input_data['fcm_token']) && !empty($input_data['fcm_token']) ? aes_decryption($input_data['fcm_token']) : '',
+                                   'version_id'=>isset($input_data['version_id']) && !empty($input_data['version_id']) ? aes_decryption($input_data['version_id']) : '',
+                                   'version_name'=>isset($input_data['version_name']) && !empty($input_data['version_name']) ? aes_decryption($input_data['version_name']) : ''
+                               );
+            $update = $this->AdminModel->update('customers',$customer_filter,$customer_data);
+           // log_message('debug',$customer_data,false);
+            //customer
+            $c_filter = array('id'=>$input_data['id']);
+            $customer = $this->AdminModel->getDetails('customers',$c_filter);
+            $name     = $customer['name'];
+            $mobile   = $customer['mobile'];
+
+            //banner
+            $b_filter = array('active'=>'1');
+            $banner = $this->AdminModel->getList('banners',$b_filter);
+
+            $banner_data = array();
+            $k = 0;
+            foreach($banner as $b){
+
+                $banner_data[$k]['image'] = base_url().$b['image'];
+                $banner_data[$k]['activity'] = $b['activity'];
+                $banner_data[$k]['value_code'] = $b['value_code'];
+                $k++;
+            }
+
+            $new_product_filter = array('new_products'=>'1');
+            $new_product = $this->AdminModel->getSectionProductList($new_product_filter,$search = false,$brand = false,$category = false,10,0);
+
+            $i = 0;
+            foreach($new_product as $new){
+                $n_filter = array('product_id'=>$new['id'],'status'=>'1','type'=>'1');
+                $images_data = $this->AdminModel->getDetails('product_images',$n_filter,$limit = 1,$offset = 0,$order_by = 'img_order asc');
+
+                $new_product[$i]['image'] = isset($images_data['product_images']) && !empty($images_data['product_images']) ?  base_url().$images_data['product_images'] : base_url().$new['image'];
+
+                // $new_product[$i]['image'] = isset($images_data['product_images']) && !empty($images_data['product_images']) ? base_url().$images_data['product_images'] : '';
+                $new_product[$i]['color_code'] = $new['color_code'];
+                $new_product[$i]['background_color'] = $new['background_color'];
+                $i++;
+            }
+
+            $top_selling_filter = array('top_selling_products'=>'1');
+            $top_selling = $this->AdminModel->getSectionProductList($top_selling_filter,$search = false,$brand = false,$category = false,10,0);
+                
+            $j = 0;
+            foreach($top_selling as $top){
+                $t_filter = array('product_id'=>$top['id'],'status'=>'1','type'=>'1');
+                $images_data = $this->AdminModel->getDetails('product_images',$t_filter,$limit = 1,$offset = 0,$order_by = 'img_order asc');
+
+                $top_selling[$j]['image'] = isset($images_data['product_images']) && !empty($images_data['product_images']) ? base_url().$images_data['product_images'] : base_url().$top['image'];
+  
+                // $top_selling[$j]['image'] = isset($images_data['product_images']) && !empty($images_data['product_images']) ? base_url().$images_data['product_images'] : '';
+
+                $top_selling[$j]['color_code'] = $top['color_code'];
+                $top_selling[$j]['background_color'] = $top['background_color'];
+                $j++;
+            }
+
+            $filter      = array('status'=>'1');
+            $brand    = $this->AdminModel->getList('brand',$filter,$join = NULL,$select = NULL,$limit = NULL,$offset = NULL,$order_by = 'sequence');
+
+            $brand_data = array();
+            $k = 0;
+            $m = 1;
+            foreach($brand as $c){
+                $brand_data[$k]['id'] = $c['id'];
+                $brand_data[$k]['brand'] = $c['brand'];
+                $brand_data[$k]['image'] = base_url().$c['image'];
+
+                if($c['brand'] == 'SWITCHES' || $c['brand'] == 'LED' || $c['brand'] == 'CAR CAMERAS' ||  $c['brand'] == 'GENERAL PRODUCTS' ||  $c['brand'] == 'TOOLS'){
+                    $brand_data[$k]['text'] = '';
+                }else{
+                    $brand_data[$k]['text'] = 'Suitable for';
+                }
+                
+
+                
+                if($m % 3 == 1){
+                    $color_code = '#1f1370';
+                }else if($m % 3 == 2){
+                    $color_code = '#1f1370';
+                }else{
+                    $color_code = '#1f1370';
+                }
+                $brand_data[$k]['color_code'] = $color_code;
+                $k++;
+                $m++;
+            }
+
+                $returnArr['error']        = false;
+                $returnArr['name']         = aes_encryption($name);
+                $returnArr['mobile']       = aes_encryption($mobile);
+                $returnArr['banner']       = $banner_data;
+                $returnArr['new_products'] = $new_product;
+                $returnArr['top_selling']  = $top_selling;
+                $returnArr['category']     = $brand_data;
+                $returnArr['type']    = !empty($customer) && $customer['user_type'] == '2' ? 'sales' : 'normal';
+        }else{
+
+            $returnArr['error']        = true;
+            $returnArr['name']         = '';
+            $returnArr['mobile']       = '' ;
+            $returnArr['banner']       = array();
+            $returnArr['new_products'] = array();
+            $returnArr['top_selling']  = array();
+            $returnArr['category']     = array();
+            $returnArr['type']    = 'normal';
+        }
+        echo json_encode($returnArr);   
+    }
 //
     public function getProductList(){
         $this->form_validation->set_rules('type','Type','xss_clean|max_length[255]');
