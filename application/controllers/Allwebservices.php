@@ -495,13 +495,13 @@ class Allwebservices extends CI_Controller {
     }
 
     public function appHomePageWithEncryption(){ 
-        $this->form_validation->set_rules('id','Id','required|numeric');
+        $this->form_validation->set_rules('id','Id','required');
         $this->form_validation->set_error_delimiters('<p class="error">','</p>');
         if($this->form_validation->run()){
             $input_data = $this->input->post();
-
+            //print_r(aes_decryption($input_data['id']));exit;
             //update customer details
-            $customer_filter = array('id'=>$input_data['id']);
+            $customer_filter = array('id'=>aes_decryption($input_data['id']));
             $customer_data = array('latitude'=>isset($input_data['latitude']) && !empty($input_data['latitude']) ? aes_decryption($input_data['latitude']) : '0',
                                    'longitude'=>isset($input_data['longitude']) && !empty($input_data['longitude']) ? aes_decryption($input_data['longitude']) : '0',
                                    'fcm_token'=>isset($input_data['fcm_token']) && !empty($input_data['fcm_token']) ? aes_decryption($input_data['fcm_token']) : '',
@@ -511,7 +511,7 @@ class Allwebservices extends CI_Controller {
             $update = $this->AdminModel->update('customers',$customer_filter,$customer_data);
            // log_message('debug',$customer_data,false);
             //customer
-            $c_filter = array('id'=>$input_data['id']);
+            $c_filter = array('id'=>aes_decryption($input_data['id']));
             $customer = $this->AdminModel->getDetails('customers',$c_filter);
             $name     = $customer['name'];
             $mobile   = $customer['mobile'];
