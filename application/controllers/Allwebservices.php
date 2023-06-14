@@ -138,10 +138,10 @@ class Allwebservices extends CI_Controller {
             curl_setopt($ch, CURLOPT_HEADER, 0);
 
             // grab URL and pass it to the browser
-            //curl_exec($ch);
+            curl_exec($ch);
 
             // close cURL resource, and free up system resources
-           // curl_close($ch);
+            curl_close($ch);
 
 
             
